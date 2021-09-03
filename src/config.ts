@@ -1,4 +1,10 @@
 const config = {
+  api: {port: 3000},
+  chatServer: {port: 3001},
+  addresses: {
+    stake: 'BGJS11XLNLWKZXXQnzEMnmafqFNA7iL5mq',
+    payout: 'SB-Payout',
+  },
   db: {
     host: 'localhost',
     // host: 'mongo',
@@ -6,6 +12,12 @@ const config = {
     name: 'sportsbook',
     user: '',
     pass: '',
+  },
+  rpc: {
+    host: 'http://178.238.231.35',
+    port: '5560',
+    user: '1x2rpcuser',
+    pass: 'VMRfNBB3LbQ8GwFU',
   },
 };
 

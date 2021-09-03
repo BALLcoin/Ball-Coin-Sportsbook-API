@@ -1,102 +1,59 @@
-import mongoose, {model, Schema, Model, Document} from 'mongoose';
+import {model, Schema, Model, Document} from 'mongoose';
 
 export interface ISport extends Document {
   name: string;
-  display_name: string;
-  show_images: boolean;
-  hours_from_now_filters: number[];
-  next_day_filters: number[];
-  market_groups: IMarketGroup[];
+  displayName: string;
+  showImages: boolean;
+  hoursFromNowFilters: number[];
+  nextDayFlters: number[];
+  marketGroups: IMarketGroup[];
 }
 
 export type IMarketGroup = IRowMarketGroup | IMultiColumnMarketGroup;
 
 export interface IMarket {
-  display_name: string;
+  name: string;
+  displayName: string;
+  externalName: string;
   handicap: boolean;
   message: string;
-  name: string;
   header?: string;
 }
 
 export interface IRowMarketGroup {
-  main_market_group: string;
+  parentGroup: string;
   name: string;
-  display_name: string;
-  type: 'row';
+  displayName: string;
+  type: 'singleRow';
   markets: IMarket[];
 }
 
 export interface IMultiColumnMarketGroup {
-  main_market_group: string;
+  parentGroup: string;
   name: string;
-  display_name: string;
-  type: 'multi_column';
+  displayName: string;
+  type: 'multiRow';
   columns: {
-    display_name: string;
+    displayName: string;
     markets: IMarket[];
   }[];
 }
 
+//todo sport schema
 const Sport: Model<ISport> = model(
   'Sport',
   new Schema(
     {
-      _id: {index: true, required: true, type: Number, unique: true},
-      sport: {
+      _id: Number,
+      name: {
         index: true,
         required: true,
-        type: Number,
-        ref: 'Sport',
+        type: String,
       },
-      homeTeam: {
+      displayName: {
         index: true,
         required: true,
-        type: Number,
-        ref: 'Team',
-      },
-      awayTeam: {
-        index: true,
-        required: true,
-        type: Number,
-        ref: 'Team',
-      },
-      league: {
-        index: true,
-        required: true,
-        type: Number,
-        ref: 'Sport',
-      },
-      date: {
-        index: true,
-        required: true,
-        type: Date,
-      },
-      lastUpdated: {
-        required: true,
-        type: Date,
-      },
-      odds: {
-        required: true,
-        type: mongoose.Schema.Types.Map,
-        of: {
-          required: true,
-          type: mongoose.Schema.Types.Map,
-          of: {
-            name: {required: true, type: String},
-            odds: {
-              required: true,
-              type: [
-                {
-                  odds: {required: true, type: Number},
-                  name: {required: true, type: String},
-                  header: {required: false, type: String},
-                  handicap: {required: false, type: String},
-                },
-              ],
-            },
-          },
-        },
+        type: String,
       },
     },
     {versionKey: false},

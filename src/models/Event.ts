@@ -1,4 +1,4 @@
-import mongoose, {model, Schema, Model, Document} from 'mongoose';
+import {model, Schema, Model, Document} from 'mongoose';
 
 export interface IEvent extends Document {
   sport: number;
@@ -6,7 +6,8 @@ export interface IEvent extends Document {
   away_team: number;
   league: number;
   date: Date;
-  last_updated: Date;
+  odds_updated: Date;
+  bets_placed: number;
   odds: {
     [key: string]: {
       [key: string]: {
@@ -26,7 +27,7 @@ const Event: Model<IEvent> = model(
   'Event',
   new Schema(
     {
-      _id: {index: true, required: true, type: Number, unique: true},
+      _id: Number,
       sport: {
         index: true,
         required: true,
@@ -49,33 +50,35 @@ const Event: Model<IEvent> = model(
         index: true,
         required: true,
         type: Number,
-        ref: 'Sport',
+        ref: 'League',
       },
       date: {
         index: true,
         required: true,
         type: Date,
       },
-      last_updated: {
+      odds_updated: {
         required: true,
         type: Date,
       },
+      bets_placed: {
+        required: true,
+        type: Number,
+      },
       odds: {
         required: true,
-        type: mongoose.Schema.Types.Map,
+        type: Schema.Types.Map,
         of: {
-          required: true,
-          type: mongoose.Schema.Types.Map,
+          type: Schema.Types.Map,
           of: {
             name: {required: true, type: String},
             odds: {
-              required: true,
               type: [
                 {
                   odds: {required: true, type: Number},
                   name: {required: true, type: String},
-                  header: {required: false, type: String},
-                  handicap: {required: false, type: String},
+                  header: String,
+                  handicap: String,
                 },
               ],
             },

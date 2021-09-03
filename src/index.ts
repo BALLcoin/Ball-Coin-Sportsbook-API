@@ -1,13 +1,25 @@
-import express from 'express';
-import cors from 'cors';
 import mongoose from 'mongoose';
+import admin from 'firebase-admin';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
+import isoWeek from 'dayjs/plugin/isoWeek';
+
+import scheduleCron from './lib/cron';
+import syncEvents from './cron/events';
+
+import startAPI from './lib/api';
+import startChatServer from './lib/chatServer';
+
+import serviceAccount from './serviceAccountKey.json';
 import config from './config';
 
-import events from './routers/events';
-
 dayjs.extend(utc);
+dayjs.extend(isoWeek);
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: 'https://expensify-533ca.firebaseio.com',
+});
 
 mongoose
   .connect(`mongodb://${config.db.host}:${config.db.port}/${config.db.name}`, {
@@ -22,17 +34,10 @@ mongoose
   .then(() => {
     console.log(`Successfully connected to database`);
 
-    const app = express();
+    scheduleCron(syncEvents, 'events');
 
-    app.use(cors());
-
-    app.use('/events', events);
-
-    const port = process.env.PORT || 3000;
-
-    app.listen(port, () => {
-      console.log(`Explorer running on port ${port}`);
-    });
+    startAPI();
+    startChatServer();
   })
   .catch((error) => {
     console.log('Error connecting to database: ', error);

@@ -37,7 +37,9 @@
     "cors": "^2.8.5",
     "dayjs": "^1.10.4",
     "express": "^4.17.1",
+    "firebase-admin": "^9.11.0",
     "mongoose": "^5.12.5",
-    "node-schedule": "^2.0.0"
+    "node-schedule": "^2.0.0",
+    "socket.io": "^4.1.3"
   }
 }

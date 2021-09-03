@@ -93,13 +93,13 @@ export const events = [
         home: {
           id: '44680',
           name: 'PIT Steelers',
-          image_id: '4345',
+          imageId: '4345',
           cc: 'us',
         },
         away: {
           id: '44114',
           name: 'BUF Bills',
-          image_id: '4414',
+          imageId: '4414',
           cc: 'us',
         },
         ss: null,
@@ -182,13 +182,13 @@ export const events = [
         home: {
           id: '82154',
           name: 'Dustin Poirier',
-          image_id: '261799',
+          imageId: '261799',
           cc: null,
         },
         away: {
           id: '64072',
           name: 'Conor McGregor',
-          image_id: '237676',
+          imageId: '237676',
           cc: null,
         },
         ss: null,

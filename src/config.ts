@@ -19,6 +19,10 @@ const config = {
     user: '1x2rpcuser',
     pass: 'VMRfNBB3LbQ8GwFU',
   },
+  bet365Api: {
+    host: 'https://api.b365api.com',
+    token: '51340-Pjzi83E1bjOVEd',
+  },
 };
 
 export default config;

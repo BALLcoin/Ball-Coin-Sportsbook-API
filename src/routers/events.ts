@@ -9,11 +9,12 @@ router.get('/', async (req: Request, res: Response) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 20;
-    const sport_id = parseInt(req.query.sport_id as string);
-    const hours_from_now_filter = parseInt(
-      req.query.hours_from_now_filter as string,
-    );
-    const next_day_filter = parseInt(req.query.next_day_filter as string);
+
+    const sport_id = parseInt(req.query.sport_id as string) || undefined;
+    const hours_from_now_filter =
+      parseInt(req.query.hours_from_now_filter as string) || undefined;
+    const next_day_filter =
+      parseInt(req.query.next_day_filter as string) || undefined;
 
     const skipIndex = (page - 1) * limit;
 
@@ -23,14 +24,14 @@ router.get('/', async (req: Request, res: Response) => {
       query.sport = sport_id;
     }
 
-    if (hours_from_now_filter) {
+    if (hours_from_now_filter !== undefined) {
       query.date = {
         $gt: dayjs().toDate(),
         $lt: dayjs().add(hours_from_now_filter, 'hour').toDate(),
       };
     }
 
-    if (next_day_filter) {
+    if (next_day_filter !== undefined) {
       const date =
         dayjs().isoWeekday() <= next_day_filter
           ? dayjs().isoWeekday(next_day_filter)

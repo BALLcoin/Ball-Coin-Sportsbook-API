@@ -11,9 +11,9 @@ const scheduleCron = async (
       if (running.includes(cronName)) return;
 
       running.push(cronName);
-      console.log(`Started syncing ${cronName}.`);
+      console.log(`[CRON] Started syncing ${cronName}.`);
       await syncFunction();
-      console.log(`Finished syncing ${cronName}.`);
+      console.log(`[CRON] Finished syncing ${cronName}.`);
       running = running.filter((name) => name !== cronName);
     });
   } catch (err) {

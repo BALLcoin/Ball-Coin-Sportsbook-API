@@ -2,7 +2,7 @@ import {model, Schema, Model, Document} from 'mongoose';
 
 export interface ILeague extends Document {
   name: string;
-  displayName: string;
+  display_name: string;
   country: string;
 }
 
@@ -16,7 +16,7 @@ const League: Model<ILeague> = model(
         required: true,
         type: String,
       },
-      displayName: {
+      display_name: {
         index: true,
         required: true,
         type: String,

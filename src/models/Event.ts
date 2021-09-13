@@ -1,26 +1,42 @@
 import {model, Schema, Model, Document} from 'mongoose';
 
+export enum ETimeStatus {
+  not_started,
+  in_play,
+  to_be_fixed,
+  ended,
+  postponed,
+  cancelled,
+  walkover,
+  interrupted,
+  abandoned,
+  retired,
+  removed = 99,
+}
+
+export interface IEventOdds {
+  [key: string]: {
+    [key: string]: {
+      name: string;
+      odds: {
+        odds: number;
+        name: string;
+        header?: string;
+        handicap?: string;
+      }[];
+    };
+  };
+}
+
 export interface IEvent extends Document {
   sport: number;
   home_team: number;
   away_team: number;
   league: number;
   date: Date;
+  time_status: ETimeStatus;
   odds_updated: Date;
-  bets_placed: number;
-  odds: {
-    [key: string]: {
-      [key: string]: {
-        name: string;
-        odds: {
-          odds: number;
-          name: string;
-          header?: string;
-          handicap?: string;
-        }[];
-      };
-    };
-  };
+  odds: IEventOdds;
 }
 
 const Event: Model<IEvent> = model(
@@ -57,13 +73,14 @@ const Event: Model<IEvent> = model(
         required: true,
         type: Date,
       },
+      time_status: {
+        index: true,
+        required: true,
+        type: Number,
+      },
       odds_updated: {
         required: true,
         type: Date,
-      },
-      bets_placed: {
-        required: true,
-        type: Number,
       },
       odds: {
         required: true,

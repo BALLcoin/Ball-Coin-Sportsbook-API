@@ -2,39 +2,40 @@ import {model, Schema, Model, Document} from 'mongoose';
 
 export interface ISport extends Document {
   name: string;
-  displayName: string;
-  showImages: boolean;
-  hoursFromNowFilters: number[];
-  nextDayFlters: number[];
-  marketGroups: IMarketGroup[];
+  display_name: string;
+  show_images: boolean;
+  hours_from_now_filters: number[];
+  next_day_filters: number[];
+  market_groups: IMarketGroup[];
+  events_updated: Date;
 }
 
-export type IMarketGroup = IRowMarketGroup | IMultiColumnMarketGroup;
+export type IMarketGroup = ISingleRowMarketGroup | IMultiColumnMarketGroup;
 
 export interface IMarket {
   name: string;
-  displayName: string;
-  externalName: string;
+  display_name: string;
+  external_name: string;
   handicap: boolean;
   message: string;
   header?: string;
 }
 
-export interface IRowMarketGroup {
-  parentGroup: string;
+export interface ISingleRowMarketGroup {
+  parent_group: string;
   name: string;
-  displayName: string;
-  type: 'singleRow';
+  display_name: string;
+  type: 'single_row';
   markets: IMarket[];
 }
 
 export interface IMultiColumnMarketGroup {
-  parentGroup: string;
+  parent_group: string;
   name: string;
-  displayName: string;
-  type: 'multiRow';
+  display_name: string;
+  type: 'multi_column';
   columns: {
-    displayName: string;
+    display_name: string;
     markets: IMarket[];
   }[];
 }
@@ -50,10 +51,27 @@ const Sport: Model<ISport> = model(
         required: true,
         type: String,
       },
-      displayName: {
+      display_name: {
         index: true,
         required: true,
         type: String,
+      },
+      show_images: {
+        required: true,
+        type: Boolean,
+      },
+      hours_from_now_filters: {
+        required: true,
+        type: [Number],
+      },
+      next_day_filters: {
+        required: true,
+        type: [Number],
+      },
+      events_updated: {
+        index: true,
+        required: true,
+        type: Date,
       },
     },
     {versionKey: false},

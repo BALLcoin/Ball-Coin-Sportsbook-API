@@ -3,9 +3,11 @@ import admin from 'firebase-admin';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import isoWeek from 'dayjs/plugin/isoWeek';
+import relativeTime from 'dayjs/plugin/relativeTime';
 
 import scheduleCron from './lib/cron';
 import syncEvents from './cron/events';
+import syncOdds from './cron/odds';
 
 import startAPI from './lib/api';
 import startChatServer from './lib/chatServer';
@@ -15,6 +17,7 @@ import config from './config';
 
 dayjs.extend(utc);
 dayjs.extend(isoWeek);
+dayjs.extend(relativeTime);
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -35,6 +38,7 @@ mongoose
     console.log(`Successfully connected to database`);
 
     scheduleCron(syncEvents, 'events');
+    scheduleCron(syncOdds, 'odds');
 
     startAPI();
     startChatServer();

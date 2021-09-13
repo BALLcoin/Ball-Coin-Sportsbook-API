@@ -2,9 +2,9 @@ import {model, Schema, Model, Document} from 'mongoose';
 
 export interface ITeam extends Document {
   name: string;
-  displayName: string;
-  country: string;
-  imageId: number;
+  display_name: string;
+  country?: string;
+  image_id?: number;
 }
 
 const Team: Model<ITeam> = model(
@@ -17,7 +17,7 @@ const Team: Model<ITeam> = model(
         required: true,
         type: String,
       },
-      displayName: {
+      display_name: {
         index: true,
         required: true,
         type: String,
@@ -27,9 +27,9 @@ const Team: Model<ITeam> = model(
         required: false,
         type: String,
       },
-      imageId: {
+      image_id: {
         index: true,
-        required: true,
+        required: false,
         type: Number,
       },
     },

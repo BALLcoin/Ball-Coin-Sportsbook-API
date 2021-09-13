@@ -2,13 +2,15 @@ import {Request, Response, NextFunction} from 'express';
 import admin from 'firebase-admin';
 import createUpdateUser from '../lib/createUpdateUser';
 
-const authorization = (role?: string) => {
+const authorization = (isAdmin = false) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       if (!req.headers.authorization) {
         res.status(401).send('No authorization header provided');
         return;
       }
+
+      //todo admin
 
       const authHeaderComponents = req.headers.authorization.split(' ');
       const authToken = authHeaderComponents[1];

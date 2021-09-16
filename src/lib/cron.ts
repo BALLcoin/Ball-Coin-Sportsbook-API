@@ -5,9 +5,10 @@ let running: string[] = [];
 const scheduleCron = async (
   syncFunction: () => Promise<void>,
   cronName: string,
+  rule?: schedule.RecurrenceRule | string,
 ) => {
   try {
-    schedule.scheduleJob('* * * * *', async () => {
+    schedule.scheduleJob(rule || '* * * * *', async () => {
       if (running.includes(cronName)) return;
 
       running.push(cronName);

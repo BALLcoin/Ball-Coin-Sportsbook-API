@@ -25,19 +25,26 @@ admin.initializeApp({
 });
 
 mongoose
-  .connect(`mongodb://${config.db.host}:${config.db.port}/${config.db.name}`, {
-    authSource: config.db.name,
-    native_parser: true,
-    pass: config.db.pass,
-    user: config.db.user,
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  // .connect(`mongodb://${config.db.host}:${config.db.port}/${config.db.name}`, {
+  //   authSource: config.db.name,
+  //   native_parser: true,
+  //   pass: config.db.pass,
+  //   user: config.db.user,
+  //   useNewUrlParser: true,
+  //   useUnifiedTopology: true,
+  // })
+  .connect(
+    'mongodb+srv://jack:Jack.29e9bca2@cluster0.h7o7z.gcp.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    },
+  )
 
   .then(() => {
     console.log(`Successfully connected to database`);
 
-    scheduleCron(syncEvents, 'events');
+    scheduleCron(syncEvents, 'events', '0 * * * *');
     scheduleCron(syncOdds, 'odds');
 
     startAPI();

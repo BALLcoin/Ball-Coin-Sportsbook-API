@@ -16,15 +16,11 @@ export enum ETimeStatus {
 
 export interface IEventOdds {
   [key: string]: {
-    [key: string]: {
-      name: string;
-      odds: {
-        odds: number;
-        name: string;
-        header?: string;
-        handicap?: string;
-      }[];
-    };
+    id: string;
+    ss: string;
+    time_str: string;
+    add_time: string;
+    [key: string]: string;
   };
 }
 
@@ -33,10 +29,10 @@ export interface IEvent extends Document {
   home_team: number;
   away_team: number;
   league: number;
-  date: Date;
+  time: Date;
   time_status: ETimeStatus;
-  odds_updated: Date;
-  odds: IEventOdds;
+  odds_updated?: Date;
+  odds?: IEventOdds;
 }
 
 const Event: Model<IEvent> = model(
@@ -68,7 +64,7 @@ const Event: Model<IEvent> = model(
         type: Number,
         ref: 'League',
       },
-      date: {
+      time: {
         index: true,
         required: true,
         type: Date,
@@ -79,28 +75,12 @@ const Event: Model<IEvent> = model(
         type: Number,
       },
       odds_updated: {
-        required: true,
+        required: false,
         type: Date,
       },
       odds: {
-        required: true,
-        type: Schema.Types.Map,
-        of: {
-          type: Schema.Types.Map,
-          of: {
-            name: {required: true, type: String},
-            odds: {
-              type: [
-                {
-                  odds: {required: true, type: Number},
-                  name: {required: true, type: String},
-                  header: String,
-                  handicap: String,
-                },
-              ],
-            },
-          },
-        },
+        required: false,
+        type: {type: Schema.Types.Map, of: String},
       },
     },
     {versionKey: false},

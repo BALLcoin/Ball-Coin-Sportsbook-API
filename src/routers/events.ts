@@ -18,33 +18,33 @@ router.get('/', async (req: Request, res: Response) => {
 
     const skipIndex = (page - 1) * limit;
 
-    let query: any = {date: {$gt: dayjs().toDate()}};
+    let query: any = {time: {$gt: dayjs().toDate()}, odds: {$exists: true}};
 
     if (sport_id) {
       query.sport = sport_id;
     }
 
     if (hours_from_now_filter !== undefined) {
-      query.date = {
+      query.time = {
         $gt: dayjs().toDate(),
         $lt: dayjs().add(hours_from_now_filter, 'hour').toDate(),
       };
     }
 
     if (next_day_filter !== undefined) {
-      const date =
+      const time =
         dayjs().isoWeekday() <= next_day_filter
           ? dayjs().isoWeekday(next_day_filter)
           : dayjs().add(1, 'week').isoWeekday(next_day_filter);
 
-      query.date = {
-        $gte: date.startOf('day').toDate(),
-        $lte: date.endOf('day').toDate(),
+      query.time = {
+        $gte: time.startOf('day').toDate(),
+        $lte: time.endOf('day').toDate(),
       };
     }
 
     const events = await Event.find(query)
-      .sort({date: 1})
+      .sort({time: 1})
       .limit(limit)
       .skip(skipIndex)
       .populate('home_team')
@@ -52,7 +52,7 @@ router.get('/', async (req: Request, res: Response) => {
       .populate('league')
       .exec();
 
-    const count = await Event.countDocuments();
+    const count = await Event.countDocuments(query);
 
     res.json({events, currentPage: page, totalPages: Math.ceil(count / limit)});
   } catch (err) {

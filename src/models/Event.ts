@@ -21,7 +21,7 @@ export interface IEventOdds {
     time_str: string;
     add_time: string;
     [key: string]: string;
-  };
+  }[];
 }
 
 export interface IEvent extends Document {
@@ -80,7 +80,7 @@ const Event: Model<IEvent> = model(
       },
       odds: {
         required: false,
-        type: {type: Schema.Types.Map, of: String},
+        type: Schema.Types.Mixed,
       },
     },
     {versionKey: false},

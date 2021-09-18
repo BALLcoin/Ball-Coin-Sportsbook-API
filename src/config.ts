@@ -21,7 +21,8 @@ const config = {
   },
   bet365Api: {
     host: 'https://api.b365api.com',
-    token: '51340-Pjzi83E1bjOVEd',
+    // token: '51340-Pjzi83E1bjOVEd',
+    token: '96249-EL5Svg0SoLWGzd',
   },
 };
 

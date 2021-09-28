@@ -18,7 +18,10 @@ router.get('/', async (req: Request, res: Response) => {
 
     const skipIndex = (page - 1) * limit;
 
-    let query: any = {time: {$gt: dayjs().toDate()}, odds: {$exists: true}};
+    let query: any = {
+      time: {$gt: dayjs().toDate()},
+      odds: {$exists: true, $ne: {}},
+    };
 
     if (sport_id) {
       query.sport = sport_id;

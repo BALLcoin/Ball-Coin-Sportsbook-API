@@ -5,7 +5,9 @@ const router = express.Router();
 
 router.get('/', async (req: Request, res: Response) => {
   try {
-    const sports = await Sport.find().sort({display_name: 1});
+    const sports = await Sport.find({
+      market_groups: {$exists: true, $ne: []},
+    }).sort({display_name: 1});
 
     res.json(sports);
   } catch (err) {

@@ -10,34 +10,37 @@ export interface ISport extends Document {
   events_updated: Date;
 }
 
-export type IMarketGroup = ISingleRowMarketGroup | IMultiColumnMarketGroup;
+export type IMarketGroup = INormalMarketGroup | IHandicappedMarketGroup;
+
+export interface INormalMarketGroup {
+  name: string;
+  display_name: string;
+  external_name: string;
+  type: 'normal';
+  markets: IMarket[];
+}
 
 export interface IMarket {
   name: string;
   display_name: string;
   external_name: string;
-  handicap: boolean;
   message: string;
-  header?: string;
 }
 
-export interface ISingleRowMarketGroup {
-  parent_group: string;
+export interface IHandicappedMarketGroup {
   name: string;
   display_name: string;
-  type: 'single_row';
-  markets: IMarket[];
+  external_name: string;
+  type: 'handicapped';
+  handicap_type: 'normal' | 'under_over';
+  markets: IHandicappedMarket[];
 }
 
-export interface IMultiColumnMarketGroup {
-  parent_group: string;
+export interface IHandicappedMarket {
   name: string;
   display_name: string;
-  type: 'multi_column';
-  columns: {
-    display_name: string;
-    markets: IMarket[];
-  }[];
+  external_name: string;
+  message: string;
 }
 
 //todo sport schema

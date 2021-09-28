@@ -10,6 +10,14 @@ import League from '../models/League';
 
 const syncEvents = async () => {
   try {
+    // const teams = await Team.find({});
+    // const leagues = await League.find({});
+    // const events = await Event.find();
+    // for (const event of events) {
+    //   event.time = dayjs(event.time).add(5, 'day').toDate();
+    //   await event.save();
+    // }
+
     // Find the sport that had it's events updated the longest time ago.
     const sport = await Sport.findOne().sort({events_updated: 1});
     if (!sport) return;

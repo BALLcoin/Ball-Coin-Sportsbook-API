@@ -1,11 +1,11 @@
-import express from 'express';
+import chalk from 'chalk';
 import cors from 'cors';
+import express from 'express';
 
 import config from '../config';
-
-import sportsRouter from '../routers/sports';
-import eventsRouter from '../routers/events';
 import betsRouter from '../routers/bets';
+import eventsRouter from '../routers/events';
+import sportsRouter from '../routers/sports';
 import usersRouter from '../routers/users';
 
 const app = express();
@@ -22,7 +22,7 @@ const port = process.env.PORT || config.api.port;
 
 const startAPI = () => {
   app.listen(port, () => {
-    console.log(`Sportsbook API running on port ${port}`);
+    console.log(`${chalk.green('[API]')} running on port ${chalk.blue(port)}`);
   });
 };
 

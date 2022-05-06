@@ -1,22 +1,26 @@
-import {model, Schema, Model, Document} from 'mongoose';
+import { Document, Model, Schema, model } from 'mongoose';
 
 export interface IBet extends Document {
   user: string;
   date: Date;
-  status: 'new' | 'lost' | 'won' | 'paid' | 'void';
-  stake_txid: string;
-  stake_amount: number;
-  payout_txid?: string;
-  payout_amount?: number;
-  total_odds: number;
-  bet_items: {
-    sport: number;
-    event: number;
-    market_group: string;
-    market: string;
-    message: string;
-    odds: number;
-  }[];
+  status: IBetStatus;
+  stakeTXID: string;
+  stakeAmount: number;
+  payoutTxid?: string;
+  payoutAmount?: number;
+  totalOdds: number;
+  betItems: IBetItem[];
+}
+
+export type IBetStatus = 'new' | 'lost' | 'won' | 'paid' | 'void';
+
+export interface IBetItem {
+  sport: number;
+  event: number;
+  marketGroup: string;
+  market: string;
+  odds: number;
+  handicap?: string;
 }
 
 const Bet: Model<IBet> = model(
@@ -40,21 +44,21 @@ const Bet: Model<IBet> = model(
         type: String,
         enum: ['new', 'lost', 'won', 'paid', 'void'],
       },
-      stake_txid: {
+      stakeTXID: {
         required: true,
         type: String,
       },
-      stake_amount: {
+      stakeAmount: {
         required: true,
         type: Number,
       },
-      payout_txid: String,
-      payout_amount: Number,
-      total_odds: {
+      payoutTxid: String,
+      payoutAmount: Number,
+      totalOdds: {
         required: true,
         type: Number,
       },
-      bet_items: {
+      betItems: {
         required: true,
         type: [
           {
@@ -65,10 +69,10 @@ const Bet: Model<IBet> = model(
             },
             event: {
               required: true,
-              type: Number,
+              type: String,
               ref: 'Event',
             },
-            market_group: {
+            marketGroup: {
               required: true,
               type: String,
             },
@@ -76,19 +80,19 @@ const Bet: Model<IBet> = model(
               required: true,
               type: String,
             },
-            message: {
-              required: true,
-              type: String,
-            },
             odds: {
               required: true,
               type: Number,
+            },
+            handicap: {
+              required: false,
+              type: String,
             },
           },
         ],
       },
     },
-    {versionKey: false},
+    { versionKey: false },
   ),
   'bets',
 );

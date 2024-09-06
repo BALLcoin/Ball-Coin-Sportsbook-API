@@ -1,49 +1,28 @@
-import {model, Schema, Model, Document} from 'mongoose';
+import { Document, Model, Schema, model } from 'mongoose';
 
 export interface ISport extends Document {
   name: string;
-  display_name: string;
-  show_images: boolean;
-  hours_from_now_filters: number[];
-  next_day_filters: number[];
-  market_groups: IMarketGroup[];
-  events_updated: Date;
+  displayName: string;
+  url: string;
+  hoursFromNowFilters: number[];
+  nextDayFilters: number[];
+  marketGroups: IMarketGroup[];
+  [key: string]: any;
 }
 
-export type IMarketGroup = INormalMarketGroup | IHandicappedMarketGroup;
-
-export interface INormalMarketGroup {
+export interface IMarketGroup {
   name: string;
-  display_name: string;
-  external_name: string;
-  type: 'normal';
+  displayName: string;
+  externalName: string;
   markets: IMarket[];
 }
 
 export interface IMarket {
   name: string;
-  display_name: string;
-  external_name: string;
-  message: string;
+  displayName: string;
+  externalName: string;
 }
 
-export interface IHandicappedMarketGroup {
-  name: string;
-  display_name: string;
-  external_name: string;
-  type: 'handicapped';
-  handicap_type: 'normal' | 'under_over';
-  markets: IHandicappedMarket[];
-}
-
-export interface IHandicappedMarket {
-  name: string;
-  display_name: string;
-  external_name: string;
-  message: string;
-}
-
-//todo sport schema
 const Sport: Model<ISport> = model(
   'Sport',
   new Schema(
@@ -54,30 +33,25 @@ const Sport: Model<ISport> = model(
         required: true,
         type: String,
       },
-      display_name: {
+      displayName: {
         index: true,
         required: true,
         type: String,
       },
-      show_images: {
+      url: {
         required: true,
-        type: Boolean,
+        type: String,
       },
-      hours_from_now_filters: {
+      hoursFromNowFilters: {
         required: true,
         type: [Number],
       },
-      next_day_filters: {
+      nextDayFilters: {
         required: true,
         type: [Number],
-      },
-      events_updated: {
-        index: true,
-        required: true,
-        type: Date,
       },
     },
-    {versionKey: false},
+    { versionKey: false },
   ),
   'sports',
 );

@@ -1,80 +1,63 @@
-import {model, Schema, Model, Document} from 'mongoose';
+import { Document, Model, Schema, model } from 'mongoose';
 
-export enum ETimeStatus {
-  not_started,
-  in_play,
-  to_be_fixed,
-  ended,
-  postponed,
-  cancelled,
-  walkover,
-  interrupted,
-  abandoned,
-  retired,
-  removed = 99,
+export interface IEvent extends Document {
+  sport: number;
+  homeTeam: string;
+  awayTeam: string;
+  homeImage?: string;
+  awayImage?: string;
+  league: string;
+  time: Date;
+  oddsUpdated?: Date;
+  odds: IEventOdds;
 }
 
 export interface IEventOdds {
   [key: string]: {
-    id: string;
-    ss: string;
-    time_str: string;
-    add_time: string;
-    [key: string]: string;
-  }[];
-}
-
-export interface IEvent extends Document {
-  sport: number;
-  home_team: number;
-  away_team: number;
-  league: number;
-  time: Date;
-  time_status: ETimeStatus;
-  odds_updated?: Date;
-  odds?: IEventOdds;
+    handicap?: string;
+    markets: { [key: string]: number };
+  };
 }
 
 const Event: Model<IEvent> = model(
   'Event',
   new Schema(
     {
-      _id: Number,
       sport: {
         index: true,
         required: true,
         type: Number,
         ref: 'Sport',
       },
-      home_team: {
+      homeTeam: {
         index: true,
         required: true,
-        type: Number,
-        ref: 'Team',
+        type: String,
       },
-      away_team: {
+      awayTeam: {
         index: true,
         required: true,
-        type: Number,
-        ref: 'Team',
+        type: String,
+      },
+      homeImage: {
+        index: true,
+        type: String,
+      },
+      awayImage: {
+        index: true,
+        type: String,
       },
       league: {
         index: true,
         required: true,
-        type: Number,
-        ref: 'League',
+        type: String,
       },
       time: {
         index: true,
         required: true,
         type: Date,
       },
-      time_status: {
-        index: true,
-        required: true,
-        type: Number,
-      },
-      odds_updated: {
+      oddsUpdated: {
         required: false,
         type: Date,
       },
@@ -83,7 +66,7 @@ const Event: Model<IEvent> = model(
         type: Schema.Types.Mixed,
       },
     },
-    {versionKey: false},
+    { versionKey: false },
   ),
   'events',
 );

@@ -1,5 +1,4 @@
 import admin from 'firebase-admin';
-
 import User from '../models/User';
 
 const createUpdateUser = async (authToken: string) => {
@@ -7,14 +6,15 @@ const createUpdateUser = async (authToken: string) => {
   const decodedAuthToken = await admin.auth().verifyIdToken(authToken);
 
   // Destructures the decoded auth token to get user details
-  const { uid, name, picture, phoneNumber, email } = decodedAuthToken;
+  const {uid, name, picture, phone_number, email} = decodedAuthToken;
 
   // If it finds a user with that uid it updates their details
-  const user = await User.findById(uid);
+  let user = await User.findById(uid);
+
   if (user) {
     user.name = name;
     user.picture = picture;
-    user.phoneNumber = phoneNumber;
+    user.phone_number = phone_number;
     user.email = email;
 
     await user.save();
@@ -26,7 +26,7 @@ const createUpdateUser = async (authToken: string) => {
     _id: uid,
     name,
     picture,
-    phoneNumber,
+    phone_number,
     email,
   });
 

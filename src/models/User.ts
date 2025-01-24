@@ -1,9 +1,9 @@
-import { Document, Model, Schema, model } from 'mongoose';
+import {model, Schema, Model, Document} from 'mongoose';
 
 export interface IUser extends Document {
   name?: string;
   picture?: string;
-  phoneNumber?: string;
+  phone_number?: string;
   email?: string;
 }
 
@@ -14,10 +14,10 @@ const User: Model<IUser> = model(
       _id: String,
       name: String,
       picture: String,
-      phoneNumber: String,
+      phone_number: String,
       email: String,
     },
-    { versionKey: false },
+    {versionKey: false},
   ),
   'users',
 );

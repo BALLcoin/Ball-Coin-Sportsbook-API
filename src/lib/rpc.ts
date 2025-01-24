@@ -1,5 +1,4 @@
 import axios from 'axios';
-
 import config from '../config';
 
 const call = async <Type>(
@@ -8,10 +7,10 @@ const call = async <Type>(
 ): Promise<Type> => {
   const result = await axios.post(
     `${config.rpc.host}:${config.rpc.port}`,
-    { method, params },
+    {method, params},
     {
-      headers: { 'Content-Type': 'application/json' },
-      auth: { username: config.rpc.user, password: config.rpc.pass },
+      headers: {'Content-Type': 'application/json'},
+      auth: {username: config.rpc.user, password: config.rpc.pass},
     },
   );
 

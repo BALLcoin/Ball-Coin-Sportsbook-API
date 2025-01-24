@@ -1,10 +1,8 @@
-import chalk from 'chalk';
-import { NextFunction, Request, Response } from 'express';
+import {Request, Response, NextFunction} from 'express';
 import admin from 'firebase-admin';
-
 import createUpdateUser from '../lib/createUpdateUser';
 
-const authorization = (requiresAdmin = false) => {
+const authorization = (isAdmin = false) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       if (!req.headers.authorization) {
@@ -12,16 +10,18 @@ const authorization = (requiresAdmin = false) => {
         return;
       }
 
-      const authToken = req.headers.authorization.split(' ')[1];
-      const decodedAuthToken = await admin.auth().verifyIdToken(authToken);
+      //todo admin
 
-      // Creates or updates the user in the database
+      const authHeaderComponents = req.headers.authorization.split(' ');
+      const authToken = authHeaderComponents[1];
+
       await createUpdateUser(authToken);
 
+      const decodedAuthToken = await admin.auth().verifyIdToken(authToken);
       req.uid = decodedAuthToken.uid;
       next();
     } catch (err) {
-      console.log(chalk.red(err));
+      console.log(err);
       res.status(500).send('Internal server error');
     }
   };

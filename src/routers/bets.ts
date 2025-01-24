@@ -1,55 +1,58 @@
-import chalk from 'chalk';
-import express, { Request, Response } from 'express';
-
-import config from '../config';
-import { getBalance, getDepositAddress, sendFrom } from '../lib/rpc';
+import express, {Request, Response} from 'express';
 import authorization from '../middleware/authorization';
-import Bet, { IBetStatus } from '../models/Bet';
+import {getBalance, getDepositAddress, sendFrom} from '../lib/rpc';
+import Bet from '../models/Bet';
+import config from '../config';
 
 const router = express.Router();
 
 router.post('/', authorization(), async (req: Request, res: Response) => {
   try {
-    // // Gets the balance
-    // const balance = await getBalance(req.uid);
+    // Error if no uid is present
+    if (!req.uid) {
+      res.status(500).send('Error placing bet!');
+      return;
+    }
 
-    // // Error if no balance is present
-    // if (!balance) {
-    //   res.status(500).send('Error placing bet!');
-    //   return;
-    // }
+    // Gets the balance
+    const balance = await getBalance(req.uid);
 
-    // // Error if the stake amount is greater than the balance
-    // if (req.body.stake > balance) {
-    //   res.status(402).send('Not enough funds!');
-    //   return;
-    // }
+    // Error if no balance is present
+    if (!balance) {
+      res.status(500).send('Error placing bet!');
+      return;
+    }
 
-    // // Send funds to the sportsbook wallet
-    // const stakeTXID = await sendFrom(
-    //   req.uid,
-    //   config.addresses.stake,
-    //   req.body.stakeAmount,
-    //   1,
-    //   'sportsbook_bet',
-    //   req.uid,
-    // );
+    // Error if the stake amount is greater than the balance
+    if (req.body.stake > balance) {
+      res.status(402).send('Not enough funds!');
+      return;
+    }
+
+    // Send funds to the sportsbook wallet
+    const stake_txid = await sendFrom(
+      req.uid,
+      config.addresses.stake,
+      req.body.stake_amount,
+      1,
+      'sportsbook_bet',
+      req.uid,
+    );
 
     // Create and save bet
-    // const bet = new Bet({ user: req.uid, stakeTXID, ...req.body });
-    const bet = new Bet({ user: req.uid, stakeTXID: 'test', ...req.body });
+    const bet = new Bet({user: req.uid, stake_txid, ...req.body});
     await bet.save();
 
     res.json(bet);
   } catch (err) {
-    console.log(chalk.red(err));
+    console.log(err);
     res.status(500).send(err.message || err);
   }
 });
 
 router.patch(
   '/:id/payout',
-  authorization(true),
+  authorization(),
   async (req: Request, res: Response) => {
     try {
       // Gets the bet
@@ -74,7 +77,7 @@ router.patch(
         return;
       }
 
-      const amount = req.body.amount || bet.stakeAmount * bet.totalOdds;
+      const amount = req.body.amount || bet.stake_amount * bet.total_odds;
 
       // Error if the payout amount is greater than the balance
       if (amount > balance) {
@@ -85,24 +88,24 @@ router.patch(
       const address = await getDepositAddress(bet.user);
 
       // Send funds to the sportsbook wallet
-      const payoutTxid = await sendFrom(
+      const payout_txid = await sendFrom(
         config.addresses.payout,
         address,
         amount,
         1,
-        `sportsbookBetPayout: ${bet._id}`,
+        `sportsbook_bet_payout: ${bet._id}`,
         bet.user,
       );
 
       // Saves the payout txid and returns the bet
       bet.status = 'paid';
-      bet.payoutTxid = payoutTxid;
-      bet.payoutAmount = amount;
+      bet.payout_txid = payout_txid;
+      bet.payout_amount = amount;
 
       await bet.save();
       res.json(bet);
     } catch (err) {
-      console.log(chalk.red(err));
+      console.log(err);
       res.status(500).send(err.message || err);
     }
   },
@@ -110,7 +113,7 @@ router.patch(
 
 router.patch(
   '/:id/void',
-  authorization(true),
+  authorization(),
   async (req: Request, res: Response) => {
     try {
       // Gets the bet
@@ -139,7 +142,7 @@ router.patch(
         return;
       }
 
-      const amount = bet.stakeAmount;
+      const amount = bet.stake_amount;
 
       // Error if the payout amount is greater than the balance
       if (amount > balance) {
@@ -150,40 +153,27 @@ router.patch(
       const address = await getDepositAddress(bet.user);
 
       // Send funds to the sportsbook wallet
-      const payoutTxid = await sendFrom(
+      const payout_txid = await sendFrom(
         config.addresses.payout,
         address,
         amount,
         1,
-        `sportsbookBetVoid: ${bet._id}`,
+        `sportsbook_bet_void: ${bet._id}`,
         bet.user,
       );
 
       // Saves the payout txid and returns the bet
       bet.status = 'void';
-      bet.payoutTxid = payoutTxid;
-      bet.payoutAmount = amount;
+      bet.payout_txid = payout_txid;
+      bet.payout_amount = amount;
 
       await bet.save();
       res.json(bet);
     } catch (err) {
-      console.log(chalk.red(err));
+      console.log(err);
       res.status(500).send(err.message || err);
     }
   },
 );
-
-router.get('/', authorization(true), async (req: Request, res: Response) => {
-  try {
-    const status = req.query.status as IBetStatus;
-
-    const bets = await Bet.find({ user: req.uid, status });
-
-    res.json(bets);
-  } catch (err) {
-    console.log(chalk.red(err));
-    res.status(500).send(err.message || err);
-  }
-});
 
 export default router;

@@ -1,4 +1,3 @@
-import chalk from 'chalk';
 import schedule from 'node-schedule';
 
 let running: string[] = [];
@@ -13,18 +12,14 @@ const scheduleCron = async (
       if (running.includes(cronName)) return;
 
       running.push(cronName);
-      console.log(
-        `${chalk.magenta('[CRON]')} Started syncing ${chalk.cyan(cronName)}.`,
-      );
+      console.log(`[CRON] Started syncing ${cronName}.`);
       await syncFunction();
-      console.log(
-        `${chalk.magenta('[CRON]')} Finished syncing ${chalk.cyan(cronName)}.`,
-      );
+      console.log(`[CRON] Finished syncing ${cronName}.`);
       running = running.filter((name) => name !== cronName);
     });
   } catch (err) {
     running = running.filter((name) => name !== cronName);
-    console.log(chalk.red(err));
+    console.log(err);
   }
 };
 
